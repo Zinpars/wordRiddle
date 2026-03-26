@@ -16,9 +16,7 @@ public class RiddleService {
         return instance;
     }
 
-    public String getRiddle() {
-        String input = getRandomWord2();
-        input = input.toUpperCase();
+    public String getRiddle(String input) {
         StringBuilder result = new StringBuilder();
         ArrayList<Character> inputChars = new ArrayList<Character>();
         char[] inputArray = input.toCharArray();
@@ -26,17 +24,36 @@ public class RiddleService {
         for (char c : inputArray) {
             inputChars.add(c);
         }
-        while (!inputChars.isEmpty()) {
+        char first = inputArray[0];
+        char last = inputArray[inputArray.length - 1];
+
+        while (true) {
             int randomIndex = (int) (Math.random() * (inputChars.size()) - 1);
+            if (inputChars.get(randomIndex) != first) {
+                result.append(inputChars.get(randomIndex));
+                inputChars.remove(randomIndex);
+                break;
+            }
+
+        }
+
+        while (!inputChars.isEmpty()) {
+            int randomIndex = (int) (Math.random() * (inputChars.size()));
             result.append(inputChars.get(randomIndex));
             inputChars.remove(randomIndex);
+        }
+
+        if (result.charAt(result.length() - 1) == last) {
+            char tmp = result.charAt(result.length() - 1);
+            result.setCharAt(result.length() - 1, result.charAt(result.length() - 2));
+            result.setCharAt(result.length() - 2, tmp);
         }
 
         return result.toString();
        // return input;
     }
 
-    private String getRandomWord() {
+    public String getRandomWord() {
 
         Path dir = Paths.get("/word-list.txt");
         try {
@@ -47,7 +64,7 @@ public class RiddleService {
         }
         return list.get((int)(Math.random() * list.size()));
     }
-    private String getRandomWord2() {
+    public String getRandomWord2() {
         try (InputStream is = getClass()
                 .getClassLoader()
                 .getResourceAsStream("word-list.txt")) {
@@ -60,7 +77,7 @@ public class RiddleService {
                     .lines()
                     .toList();
 
-            return list.get((int) (Math.random() * list.size()));
+            return list.get((int) (Math.random() * list.size())).toUpperCase();
 
         } catch (IOException e) {
             throw new RuntimeException(e);

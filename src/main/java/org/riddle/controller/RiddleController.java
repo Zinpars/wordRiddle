@@ -18,8 +18,12 @@ public class RiddleController extends HttpServlet   {
 
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         resp.setContentType("text/html");
-        String riddle = service.getRiddle();
+        String solution = service.getRandomWord2();
+        String riddle = service.getRiddle(solution);
+        req.setAttribute("solution", solution);
         req.setAttribute("riddle", riddle);
+
+        resp.setHeader("solution", solution);
         TemplateEngine.process("index.html", req, resp);
     }
 }
